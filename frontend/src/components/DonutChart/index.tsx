@@ -1,12 +1,36 @@
+import axios from 'axios';
 import Chart from 'react-apexcharts';
+import { SaleSun } from 'types/sale';
+import { BASE_URL } from 'utils/request';
+
+type ChartData = {
+    series: number [];
+    labels: string []
+    
+    }
+
 
 //function DonutChart() { declarar a função de outro modo
 const DonutChart = () => { //Essa função é com o Lambda
     
-    const mockData = {
-        series: [477138, 499928, 444867, 220426, 473088],
-        labels: ['Anakin', 'Barry Allen', 'Kal-El', 'Logan', 'Padmé']
-    }
+    //FORMA ERRADA PARA TESTAR
+let chartData : ChartData = {labels:[], series:[]};
+
+ //FORMA ERRADA
+axios.get(`${BASE_URL}/sales/amount-by-seller`)
+.then(response =>{ // resposta quando chegar com sucesso
+    const data = response.data as SaleSun[];
+    const myLabels = data.map(x => x.sellerName);
+    const mySeries = data.map(x => x.sum);
+
+    chartData = {labels:myLabels, series:mySeries};
+console.log(chartData);
+});
+
+  // const mockData = {
+     //   series: [477138, 499928, 444867, 220426, 473088], //Array de numeros
+     //   labels: ['Anakin', 'Barry Allen', 'Kal-El', 'Logan', 'Padmé']
+   // }
     
     const options = {
         legend: {
@@ -16,8 +40,8 @@ const DonutChart = () => { //Essa função é com o Lambda
     
     return (
       <Chart 
-      options ={{ ...options, labels: mockData.labels}}
-      series={mockData.series} 
+      options ={{ ...options, labels: chartData.labels}}
+      series={chartData.series} 
       type="donut"
       height="240"
 
